@@ -133,7 +133,7 @@ const getAllProperties = function(options, limit = 10) {
   LIMIT $${queryParams.length};
   `;
 
-  console.log(queryString, queryParams);
+
   return pool.query(queryString, queryParams)
   .then(res => res.rows);
 
@@ -147,9 +147,27 @@ exports.getAllProperties = getAllProperties;
  * @return {Promise<{}>} A promise to the property.
  */
 const addProperty = function(property) {
-  const propertyId = Object.keys(properties).length + 1;
-  property.id = propertyId;
-  properties[propertyId] = property;
-  return Promise.resolve(property);
+  const owner_id = property.owner_id
+  const title = property.title
+  const description = property.description
+  const thumb_nail_url = property.thumbnail_photo_url
+  const cover_photo_url = property.cover_photo_url
+  const country = property.country
+  const street = property.street
+  const city = property.city
+  const province = property.province
+  const post_code = property.post_code
+  const cost_per_night = property.cost_per_night
+  const parking_spaces = property.parking_spaces
+  const number_of_bathrooms = property.number_of_bathrooms
+  const number_of_bedrooms = property.number_of_bathrooms
+
+
+  return pool.query(`
+  INSERT INTO properties(owner_id, title, description, thumbnail_photo_url, cover_photo_url, country, street, city, province, post_code, cost_per_night, parking_spaces, number_of_bathrooms, number_of_bedrooms)
+  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+  RETURNING *`, [owner_id, title, description, thumb_nail_url, cover_photo_url, country, street, city, province, post_code, cost_per_night, parking_spaces, number_of_bathrooms, number_of_bedrooms]
+  )
+  .then(res => res.rows[0])
 }
 exports.addProperty = addProperty;
